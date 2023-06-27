@@ -4,6 +4,8 @@ import Head from "next/head"
 import Header from "../components/Header"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 import { NotificationProvider } from "web3uikit"
+import dotenv from "dotenv"
+dotenv.config()
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
