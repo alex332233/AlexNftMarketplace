@@ -1,5 +1,3 @@
-import Head from "next/head"
-import Image from "next/image"
 import styles from "../styles/Home.module.css"
 import { Form, useNotification, Button } from "web3uikit"
 import { useMoralis, useWeb3Contract } from "react-moralis"
@@ -7,12 +5,14 @@ import { ethers } from "ethers"
 import nftAbi from "../constants/BasicNft.json"
 import nftMarketplaceAbi from "../constants/NftMarketplace.json"
 import networkMapping from "../constants/networkMapping.json"
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function Home() {
     const { chainId, account, isWeb3Enabled } = useMoralis()
-    const chainString = chainId ? parseInt(chainId).toString() : "31337"
-    const marketplaceAddress = networkMapping[chainString].NftMarketplace[0]
+    console.log(`chainId is: ${chainId}`)
+    const chainString = parseInt(chainId).toString()
+    const marketplaceAddress = chainId ? networkMapping[chainString].NftMarketplace[0] : null
+
     const dispatch = useNotification()
     const [proceeds, setProceeds] = useState("0")
 
@@ -44,7 +44,7 @@ export default function Home() {
     }
 
     async function handleApproveSuccess(tx, nftAddress, tokenId, price) {
-        console.log("Ok! Now time to list")
+        console.log("Time to list...")
         await tx.wait()
         const listOptions = {
             abi: nftMarketplaceAbi,
@@ -59,24 +59,19 @@ export default function Home() {
 
         await runContractFunction({
             params: listOptions,
-            onSuccess: () => handleListSuccess(),
-            onError: (error) => console.log(error),
+            onSuccess: (tx) => handleListSuccess(tx),
+            onError: (error) => {
+                console.log(error)
+            },
         })
     }
 
-    async function handleListSuccess() {
+    async function handleListSuccess(tx) {
+        await tx.wait(1)
         dispatch({
             type: "success",
-            message: "NFT listing",
-            title: "NFT listed",
-            position: "topR",
-        })
-    }
-
-    const handleWithdrawSuccess = () => {
-        dispatch({
-            type: "success",
-            message: "Withdrawing proceeds",
+            message: "NFT Listing on page!",
+            title: "NFT Listed",
             position: "topR",
         })
     }
@@ -102,8 +97,18 @@ export default function Home() {
         setupUI()
     }, [proceeds, account, isWeb3Enabled, chainId])
 
+    async function handleWithdrawSuccess(tx) {
+        await tx.wait(1)
+        dispatch({
+            type: "success",
+            message: "Withdraw proceeds success!",
+            title: "Withdraw proceeds",
+            position: "topR",
+        })
+    }
+
     return (
-        <div className={styles.container}>
+        <div className="container mx-auto">
             <Form
                 onSubmit={approveAndList}
                 data={[
@@ -121,35 +126,38 @@ export default function Home() {
                         key: "tokenId",
                     },
                     {
-                        name: "Price (in ETH)",
+                        name: "Price in ETH",
                         type: "number",
                         value: "",
                         key: "price",
                     },
                 ]}
-                title="Sell your NFT!"
+                title="Sell your NFTs!"
                 id="Main Form"
             />
-            <div>Withdraw {proceeds} proceeds</div>
+            <h1 className="py-2 px-4 font-bold text-2xl">Proceeds</h1>
             {proceeds != "0" ? (
-                <Button
-                    onClick={() => {
-                        runContractFunction({
-                            params: {
-                                abi: nftMarketplaceAbi,
-                                contractAddress: marketplaceAddress,
-                                functionName: "withdrawProceeds",
-                                params: {},
-                            },
-                            onError: (error) => console.log(error),
-                            onSuccess: () => handleWithdrawSuccess,
-                        })
-                    }}
-                    text="Withdraw"
-                    type="button"
-                />
+                <div className="px-4">
+                    <div className="px-6 py-2">withdraw {proceeds} proceeds</div>
+                    <Button
+                        onClick={() => {
+                            runContractFunction({
+                                params: {
+                                    abi: nftMarketplaceAbi,
+                                    contractAddress: marketplaceAddress,
+                                    functionName: "withdrawProceeds",
+                                    params: {},
+                                },
+                                onError: (error) => console.log(error),
+                                onSuccess: (tx) => handleWithdrawSuccess(tx),
+                            })
+                        }}
+                        text="Withdraw"
+                        type="button"
+                    />
+                </div>
             ) : (
-                <div>No proceeds detected</div>
+                <div className="px-4">No proceeds to withdraw</div>
             )}
         </div>
     )
