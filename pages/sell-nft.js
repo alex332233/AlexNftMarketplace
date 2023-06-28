@@ -138,7 +138,9 @@ export default function Home() {
             <h1 className="py-2 px-4 font-bold text-2xl">Proceeds</h1>
             {proceeds != "0" ? (
                 <div className="px-4">
-                    <div className="px-6 py-2">withdraw {proceeds} proceeds</div>
+                    <div className="px-6 py-2">
+                        withdraw {ethers.utils.formatUnits(proceeds)} ETH
+                    </div>
                     <Button
                         onClick={() => {
                             runContractFunction({
