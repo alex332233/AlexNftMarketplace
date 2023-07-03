@@ -12,9 +12,17 @@ export default function Header() {
                 <Link href="/sell-nft">
                     <a className="mr-4 p-4">Sell NFT</a>
                 </Link>
-                <Link href="/PDF/NFTMarketplace_Eng.pdf">
+                {/* <Link href="https://drive.google.com/file/d/1R05Sw1YxGB4YqAd-yJq07vum6JP90Znx/view?usp=sharing">
                     <a className="mr-4 p-4">Docs</a>
-                </Link>
+                </Link> */}
+                <a
+                    href="https://drive.google.com/file/d/1R05Sw1YxGB4YqAd-yJq07vum6JP90Znx/view?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferer"
+                    className="mr-4 p-4"
+                >
+                    Docs
+                </a>
                 <ConnectButton moralisAuth={false} />
             </div>
         </nav>
