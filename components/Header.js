@@ -12,6 +12,9 @@ export default function Header() {
                 <Link href="/sell-nft">
                     <a className="mr-4 p-4">Sell NFT</a>
                 </Link>
+                <Link href="/PDF/NFTMarketplace_Eng.pdf">
+                    <a className="mr-4 p-4">Docs</a>
+                </Link>
                 <ConnectButton moralisAuth={false} />
             </div>
         </nav>
