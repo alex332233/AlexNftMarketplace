@@ -7,7 +7,8 @@ import { NotificationProvider } from "web3uikit"
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
-    uri: "https://api.studio.thegraph.com/query/48694/nftmarketplace/version/latest",
+    // uri: "https://api.studio.thegraph.com/query/48694/nftmarketplace/version/latest",
+    uri: process.env.NEXT_PUBLIC_SUBGRAPH_URL,
 })
 
 function MyApp({ Component, pageProps }) {
